@@ -2,7 +2,7 @@
 include cflags.mk
 
 LDFLAGS = -lm
-CC = gcc-9
+CC = gcc
 
 OBJ = optimised-gemm.o
 
@@ -14,7 +14,7 @@ help:
 	@echo "Available targets are"
 	@echo "  clean: Remove all build artifacts"
 	@echo "  gemm: Build the gemm binary"
-	@echo "  check: Run a simple-minded check of your implementation"
+	@echo "  check: Run a simple check of the implementation"
 
 clean:
 	-rm -f gemm $(OBJ)

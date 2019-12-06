@@ -1,1 +1,1 @@
-CFLAGS := -O3 -march=native -D_GNU_SOURCE -Wall -Wextra -fopenmp-simd -Wno-unknown-pragmas
+CFLAGS := -O3 -march=native -Wall -Wextra -ffast-math -fopenmp-simd

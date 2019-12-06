@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+
 /*
  * This implementation follows in part the UlmBLAS tutorial from
  * http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/
@@ -85,7 +86,13 @@ static void pack_B(int k, int n,
   }
 }
 
-static void micro_kernel(int kc,
+#define DO_PRAGMA_(x) _Pragma (#x)
+#define DO_PRAGMA(x) DO_PRAGMA_(x)
+
+#define GCC_UNROLL(NR) DO_PRAGMA(GCC unroll NR)
+#define CLANG_UNROLL(NR) DO_PRAGMA(clang loop unroll_count(NR))
+
+static inline void micro_kernel(int kc,
                          const double * restrict A,
                          const double * restrict B,
                          double * restrict AB)
@@ -95,8 +102,8 @@ static void micro_kernel(int kc,
 
   /* For every "block" column */
   for (l = 0; l < kc; ++l) {
-#pragma unroll
-#pragma GCC unroll 8
+CLANG_UNROLL(NR)
+GCC_UNROLL(NR)
     for (j = 0; j < NR; ++j)
 #pragma omp simd
       for (i = 0; i < MR; ++i)
