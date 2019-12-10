@@ -81,6 +81,7 @@ you should see the following files
 cflags.mk
 gemm.c
 Makefile
+micro-kernel.c
 optimised-gemm.c
 parameters.h
 \end{minted}
@@ -101,17 +102,26 @@ Usage: ./gemm M N K mode
 Where M, N, and K are the dimensions of the problem.
 'mode' is one of BENCH or CHECK
 \end{minted}
-
-To change parameters, edit \texttt{parameters.h} and use
-\texttt{make} again to rebuild. To change optimisation flags to the
-compiler, edit \texttt{cflags.mk} and use \texttt{make} to rebuild.
+Running the code with arguments for the matrix sizes and the mode
+\texttt{BENCH} produces a line of output with six columns
+\begin{minted}{sh}
+$ ./gemm 128 2048 997 BENCH
+128 2048 997 0.0608405 5.22715e+08 8.59156e+09
+\end{minted}
+The columns are, in order
+\begin{minted}{sh}
+M N K Time(s) FLOP FLOP/s
+\end{minted}
+where \texttt{FLOP} is the total number of floating point operations
+required for the multiplication and \texttt{FLOP/s} is the floating
+point throughput in \texttt{FLOP} per second (also available by
+dividing the \texttt{FLOP} column by the time column.
 
 \subsection{Task specification}
 \label{sec:task}
-The provided implementation implements the loop structure correctly, but
-does not have optimal values for the loop blocking parameters.
-There are five parameters to tune:
-
+The provided implementation implements the BLIS loop structure
+correctly, but does not have optimal values for the loop blocking
+parameters. There are five parameters to tune:
 \begin{enumerate}
 \item \texttt{MR} and \texttt{NR} control the size of the inner-most
   micro-kernel loops. These should be chosen quite small, so that the
@@ -121,17 +131,57 @@ There are five parameters to tune:
   cache. The BLIS papers provide some guidance on how to choose these
   appropriately.
 \end{enumerate}
+To change these, edit the file \texttt{parameters.h} and rebuild the
+executable with \texttt{make} (don't forget this second step!).
 
 Your goal is to choose a set of parameters that achieves good
 performance for this algorithm over a range of matrix sizes
 (controlled by the \texttt{M}, \texttt{N}, and \texttt{K} arguments to
-the executable).
+the executable). Background information on how to choose
+parameters (and bounds on memory movement) is available in
+\textcite{Low:2016} and \textcite{Smith:2017}.
 
-You should justify why you think the performance you have achieved is
-good by reference to an appropriate \emph{performance model}. The main
-aim is to show that you understand how to use an apply the tools and
-models seen in the course. You should do so by writing a short report
-(no more than 3 pages) describing your choice of 
+In addition to changing parameters, you might also (depending on the
+compiler you select) need to add some vectorisation and loop unrolling
+pragmas to the innermost micro-kernel. To do this, edit the file
+\texttt{micro-kernel.c} and rebuild the executable with \texttt{make}.
+
+Finally, you can also experiment with different compilers (if
+available) and compiler flags (the default set is not optimal) by
+editing \texttt{cflags.mk} and rebuilding the executable with
+\texttt{make}.
+
+You should not need to edit any of the other files.
+
+\pagebreak
+\subsection{Submission details}
+\label{sec:submission}
+
+You should write up your findings in a short report, detailing the
+performance you achieved. The report should discuss, supported by
+appropriate evidence (either via models or measurements) the reasons
+for your choices of parameters, compiler flags, and code
+annotations/optimisations. You should additionally discuss what else
+you think would be required to improve performance (or else state why
+you think you have achieved the maximum performance possible) with
+reference to appropriate models and measurements.
+
+You should submit
+
+\begin{itemize}
+\item \textbf{Report (max 3 pages)}.
+
+  \textbf{This document \emph{must} be submitted as PDF}.
+
+  
+\item A zip file containing the modified files with the optimal set of
+  parameters/compiler flags/etc\dots
+  \begin{itemize}
+  \item \texttt{cflags.mk}
+  \item \texttt{micro-kernel.c}
+  \item \texttt{parameters.h}
+  \end{itemize}
+\end{itemize}
 
 \section{Marks}
 \label{sec:marks}
@@ -145,37 +195,18 @@ will be awarded as follows:
     \toprule
     Descriptor                                                  & Marks \\
     \midrule
-    Demonstration of use of tools                               & 25    \\
-    Appropriate use of performance model(s)                     & 15    \\
+    Appropriate use of performance measurements                 & 20    \\
+    Appropriate use of performance model(s)                     & 20    \\
     Quality of writing                                          & 15    \\
     Quality of presentation of data                             & 15    \\
     \midrule
-    Performance of chosen set of parameters as fraction of peak & 30    \\
+    Performance of final code                                   & 30    \\
     \midrule
     Total                                                       & 100   \\
     \bottomrule
   \end{tabularx}
 \end{center}
 
-\subsection{Submission details}
-\label{sec:submission}
-
-You should submit the following via DUO.
-\begin{itemize}
-\item \textbf{Report (max 3 pages)}
-  detailing your approach to the problem and evaluating the
-  performance of your solution (includes performance analysis).
-  Provide any illustrative figures or tables of the performance data
-  that you collected, demonstrating that you have achieved the goal of
-  a fast sparse matrix-matrix multiply.
-
-  \textbf{This document \emph{must} be submitted as a PDF}.
-
-\item \textbf{Full program source code} for your solution to
-  \cref{sec:level-4-students}.  This should be provided as a tarball
-  of all the relevant project files.  Ensure that your submission
-  meets the functional requirements of \cref{sec:requirements-l4}.
-\end{itemize}
 \printbibliography
 
 \end{document}

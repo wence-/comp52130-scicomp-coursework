@@ -86,33 +86,7 @@ static void pack_B(int k, int n,
   }
 }
 
-#define DO_PRAGMA_(x) _Pragma (#x)
-#define DO_PRAGMA(x) DO_PRAGMA_(x)
-
-#define GCC_UNROLL(NR) DO_PRAGMA(GCC unroll NR)
-#define CLANG_UNROLL(NR) DO_PRAGMA(clang loop unroll_count(NR))
-
-static inline void micro_kernel(int kc,
-                         const double * restrict A,
-                         const double * restrict B,
-                         double * restrict AB)
-{
-  /* Compute a little MR x NR output block in C. */
-  int i, j, l;
-
-  /* For every "block" column */
-  for (l = 0; l < kc; ++l) {
-CLANG_UNROLL(NR)
-GCC_UNROLL(NR)
-    for (j = 0; j < NR; ++j)
-#pragma omp simd
-      for (i = 0; i < MR; ++i)
-        /* Multiply row of A into column of B. */
-        AB[i + j*MR] += A[i] * B[j];
-    A += MR;
-    B += NR;
-  }
-}
+#include "micro-kernel.c"
 
 static void macro_kernel(int mc, int nc, int kc,
                          double * restrict _A,

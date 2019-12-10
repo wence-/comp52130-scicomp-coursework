@@ -1,8 +1,5 @@
-# These flags are for GCC (clang/intel) may need different ones
 include cflags.mk
-
 LDFLAGS = -lm
-CC = gcc
 
 OBJ = optimised-gemm.o
 
@@ -22,7 +19,7 @@ clean:
 gemm: gemm.c $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $< $(OBJ) $(LDFLAGS)
 
-optimised-gemm.o: optimised-gemm.c parameters.h cflags.mk
+optimised-gemm.o: optimised-gemm.c micro-kernel.c parameters.h cflags.mk
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 check: gemm

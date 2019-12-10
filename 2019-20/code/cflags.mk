@@ -1,1 +1,3 @@
-CFLAGS := -O3 -march=native -Wall -Wextra -ffast-math -fopenmp-simd
+# These flags are for GCC/clang, Intel may need different ones
+CC = gcc
+CFLAGS := -O2 -march=native
