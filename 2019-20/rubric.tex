@@ -55,9 +55,11 @@ and $B \in \mathbb{R}^{k \times n}$ are rectangular matrices.
 The provided code implements the loop blocking scheme developed by
 Kazushigo Goto, Robert van der Geijn and co-workers in the BLIS
 (BLAS-like Library Instantiation Software) framework. It is described
-in two papers: \textcite{Goto:2008} and \textcite{Zee:2015}. The na{\"i}ve
-implementation of matrix-matrix multiplication uses three nested
-for-loops.
+in detail two papers: \textcite{Goto:2008} and \textcite{Zee:2015}.
+You do not have to read these to make progress on the coursework, they
+may be interesting and/or useful when deciding how to choose
+parameters. The na{\"i}ve implementation of matrix-matrix
+multiplication uses three nested for-loops.
 \begin{minted}{c}
 for (j = 0; j < n; j++)
   for (p = 0; p < k; p++)
@@ -78,6 +80,9 @@ The code is provided as a number of C and header files, along with a
 \texttt{Makefile} to build the executable. After unpacking the code,
 you should see the following files
 \begin{minted}{sh}
+# unpack code
+$ tar zxvf code.tgz
+$ ls code
 cflags.mk
 gemm.c
 Makefile
@@ -86,10 +91,8 @@ optimised-gemm.c
 parameters.h
 \end{minted}
 
-To build the executeable, type \texttt{make}.
+To build the executable, type \texttt{make}.
 \begin{minted}{sh}
-# unpack code
-$ tar zxvf code.tgz
 $ cd code
 $ make
 \end{minted}
@@ -151,7 +154,11 @@ available) and compiler flags (the default set is not optimal) by
 editing \texttt{cflags.mk} and rebuilding the executable with
 \texttt{make}.
 
-You should not need to edit any of the other files.
+You should not need to edit any of the other files. This coursework is
+about single-core, vectorised optimisation, rather than shared memory
+(OpenMP) or distributed memory (MPI) optimisation. Hence you do not
+need to try and implemented a shared- or distributed-memory
+parallelisation strategy.
 
 \pagebreak
 \subsection{Submission details}
@@ -174,7 +181,7 @@ You should submit
   \textbf{This document \emph{must} be submitted as PDF}.
 
   
-\item A zip file containing the modified files with the optimal set of
+\item A zip file containing the three modified files with the optimal set of
   parameters/compiler flags/etc\dots
   \begin{itemize}
   \item \texttt{cflags.mk}
@@ -200,7 +207,7 @@ will be awarded as follows:
     Quality of writing                                          & 15    \\
     Quality of presentation of data                             & 15    \\
     \midrule
-    Performance of final code                                   & 30    \\
+    Performance of submitted code                               & 30    \\
     \midrule
     Total                                                       & 100   \\
     \bottomrule
