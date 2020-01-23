@@ -152,7 +152,11 @@ pragmas to the innermost micro-kernel. To do this, edit the file
 Finally, you can also experiment with different compilers (if
 available) and compiler flags (the default set is not optimal) by
 editing \texttt{cflags.mk} and rebuilding the executable with
-\texttt{make}.
+\texttt{make}. If you set \texttt{USE\_LIKWID = Yes} in
+\texttt{cflags.mk} then the code will be compiled with likwid marker
+instrumentation. You can then use \texttt{likwid-perfctr} and the
+marker API to carry out performance measurements of the interesting
+parts of the code.
 
 You should not need to edit any of the other files. This coursework is
 about single-core, vectorised optimisation, rather than shared memory
