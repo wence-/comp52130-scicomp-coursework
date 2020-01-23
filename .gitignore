@@ -8,5 +8,9 @@ _minted-rubric/
 *.log
 *.out
 /2019-20/rubric.pdf
+/2019-20/rubric.synctex.gz
+/2019-20/code/gemm
+/2019-20/code/optimised-gemm.o
+/2019-20/auto/
 *.run.xml
 Checklist 1.docx
