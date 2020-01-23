@@ -6,6 +6,8 @@
 #include <time.h>
 #include <errno.h>
 
+#include "likwidinc.h"
+
 typedef void (*gemm_fn_t)(int, int, int,
                           const double *, int,
                           const double *, int,
@@ -37,6 +39,7 @@ static void basic_gemm(int m, int n, int k,
                        double *c, int ldc)
 {
   int i, j, p;
+  LIKWID_MARKER_START("BASIC_GEMM");
   for (j = 0; j < n; j++) {
     for (p = 0; p < k; p++) {
       for (i = 0; i < m; i++) {
@@ -44,6 +47,7 @@ static void basic_gemm(int m, int n, int k,
       }
     }
   }
+  LIKWID_MARKER_STOP("BASIC_GEMM");
 }
 
 void alloc_matrix(int m, int n, double **a)
@@ -243,6 +247,10 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  LIKWID_MARKER_INIT;
+  LIKWID_MARKER_THREADINIT;
+  LIKWID_MARKER_REGISTER("BASIC_DGEMM");
+  LIKWID_MARKER_REGISTER("OPTIMISED_DGEMM");
   /* A is m x k; B is k x n; C is m x n. */
   m = atoi(argv[1]);
   n = atoi(argv[2]);
@@ -260,7 +268,9 @@ int main(int argc, char **argv)
     }
   } else {
     fprintf(stderr, "Unrecognised mode %s, should be BENCH or CHECK\n", argv[4]);
+    LIKWID_MARKER_CLOSE;
     return 1;
   }
+  LIKWID_MARKER_CLOSE;
   return 0;
 }

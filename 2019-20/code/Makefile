@@ -1,6 +1,11 @@
 include cflags.mk
 LDFLAGS = -lm
 
+ifeq ($(USE_LIKWID), Yes)
+  LDFLAGS += -llikwid
+  CFLAGS += -DLIKWID_PERFMON
+endif
+
 OBJ = optimised-gemm.o
 
 .PHONY: check clean help

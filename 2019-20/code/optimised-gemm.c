@@ -7,6 +7,7 @@
  * http://apfel.mathematik.uni-ulm.de/~lehn/sghpc/gemm/
  */
 
+#include "likwidinc.h"
 #include "parameters.h"
 
 static void pack_A_full(int k,
@@ -145,6 +146,7 @@ void optimised_gemm(int m, int n, int k,
   int _mc = m % MC;  
   int _nc = n % NC;
   int _kc = k % KC;
+  LIKWID_MARKER_START("OPTIMISED_GEMM");
 
   err = posix_memalign((void**)&_A, 64, sizeof(*_A)*((MC / MR)*MR + (MC % MR ? MR : 0))*KC);
   if (err) {
@@ -201,4 +203,5 @@ void optimised_gemm(int m, int n, int k,
   }
   free(_A);
   free(_B);
+  LIKWID_MARKER_STOP("OPTIMISED_GEMM");
 }
