@@ -1,0 +1,174 @@
+\documentclass[a4paper]{article}
+
+\usepackage[margin=3cm]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{matrix,shapes,positioning,fit,decorations.pathreplacing,arrows,calc}
+\usepackage{graphicx}
+\usepackage{cleveref}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{subcaption}
+ \usepackage[doi=true,
+ url=false,
+ sorting=ydnt,
+ maxnames=10,
+ backend=biber,
+ isbn=false,
+ giveninits=true,
+ defernumbers=true]{biblatex}
+\usepackage{minted}
+
+
+\title{Performance analysis of a molecular dynamics application}
+
+\author{Lawrence Mitchell\thanks{lawrence.mitchell@durham.ac.uk}}
+
+\begin{document}
+\maketitle
+
+This assignment is to be completed and handed in via DUO. 
+For deadlines, please consult DUO.
+
+\section{Introduction}
+\label{sec:introduction}
+
+This coursework is to profile the performance of the \texttt{miniMD}
+molecular dynamics MiniApp from the Mantevo project
+(\url{https://www.mantevo.org}). Your goal is to determine the
+computationally expensive parts of the code, and then perform more
+detailed profiling using Likwid. Based on your measurements, you
+should suggest some potential directions for obtaining more
+performance in the code. You should perform your experiments on
+Hamilton.
+
+\section{Building the code}
+\label{sec:build}
+
+The code is provided as a number of C++ and header files, along with a
+\texttt{Makefile} to build the executable. Obtain the code
+(\texttt{code.tgz}) on DUO. After unpacking it with \texttt{tar xvf
+  code.tgz}, you should see a directory \texttt{miniMD}.
+
+The code can be built with either GCC or the Intel compiler. For GCC,
+you need to do
+\begin{minted}{sh}
+$ module load gcc/9.3.0
+\end{minted}
+For Intel, you need to do
+\begin{minted}{sh}
+$ module load gcc/9.3.0
+$ module load intel/2019.5
+\end{minted}
+To build after loading the appropriate modules, use \texttt{make}.
+\begin{minted}{sh}
+$ cd miniMD
+$ make
+\end{minted}
+
+\section{Running the code}
+\label{sec:run}
+After building the code, you should have a \texttt{miniMD} executable.
+To run the executable with default parameters just use
+\texttt{./miniMD}, you should see output like the below
+\begin{minted}{sh}
+$ ./miniMD
+# Create System:
+# Done .... 
+# miniMD-Reference 2.0 output ...
+# Run Settings: 
+        # Inputfile: in.lj.miniMD
+        # Datafile: None
+
+... Some details elided ...
+# Performance Summary:
+# nsteps natoms t_total t_force t_comm t_other performance
+100 131072 6.136177 4.953426 0.094199 1.088552 2136053.094
+\end{minted}
+The final line shows a timing summary for different sections of the
+code, along with performance in "number of atom updates per second"
+(larger is better).
+
+You can change the number of timesteps the program runs with
+\texttt{./miniMD -n \#numsteps} (fewer steps runs for a shorter time).
+The size of the problem (number of atoms) can be changed with
+\texttt{./miniMD -s \#size}. The default is 32.
+You can select between two algorithms for force computations with
+\texttt{./miniMD --half\_neigh 0} and \texttt{./miniMD --half\_neigh 1}.
+
+\subsection{Task specification}
+\label{sec:task}
+Your goal is to perform profiling of the provided code to identify
+computational hotspots. Having identified the hotspots, you should
+then explore them hotspots in more detail using likwid (by
+appropriately annotating the identified hotspots). Recall that to use
+likwid on Hamilton you need \texttt{module load likwid/5.0.1}.
+
+You should explore the effect of different compiler flags (the default
+set is not optimal) on the performance by editing \texttt{cflags.mk}
+and rebuilding the executable with \texttt{make}.
+
+In addition to compiler flags, the code implements two optimisations,
+selected by setting \texttt{USE\_SIMD} and \texttt{USE\_PADDING} to
+\texttt{Yes} in \texttt{cflags.mk}. What, if any, effect do these
+settings have on the performance?
+
+
+\subsection{Submission details}
+\label{sec:submission}
+
+You should write up your findings in a short report, detailing the
+performance you achieved. The report should identify the hotspots that
+you found and discuss, supported by appropriate evidence (either via
+models or measurements) the best choice of compiler flags, and present
+some ideas to improve performance further. Provide details of your
+choices by including in the report the final version of the
+\texttt{cflags.mk} file that resulted in the best performance.
+
+In addition to this discussion, your report should present data and a
+discussion answering the following questions:
+\begin{enumerate}
+\item What is the algorithmic complexity of the code for a \emph{fixed
+    problem size} when you change the number of timesteps (via
+  \texttt{-n})?
+\item What is the algorithmic complexity of the code for a \emph{fixed
+    number of timesteps} when you increase the number of atoms (via
+  \texttt{-s})?
+\item What can you say about these results when you change the
+  algorithm used for force computations (\texttt{--half\_neigh})?
+\end{enumerate}
+
+You should submit
+\begin{itemize}
+\item \textbf{Report (max 3 pages)}.
+
+  \textbf{This document \emph{must} be submitted as PDF}.
+\end{itemize}
+
+\section{Marks}
+\label{sec:marks}
+
+There are in total 100 marks for the coursework, they
+will be awarded as follows:
+
+\begin{center}
+  \renewcommand\tabularxcolumn[1]{m{#1}}
+  \begin{tabularx}{0.9\linewidth}{Xc}
+    \toprule
+    Descriptor                                                  & Marks \\
+    \midrule
+    Discussion of algorithmic complexity                        & 30    \\
+    Identification of code hotspots                             & 20    \\
+    Appropriate use of performance measurements                 & 20    \\
+    Appropriate use of performance model(s)                     & 10    \\
+    \midrule
+    Quality of writing and presentation of data                 & 20    \\
+    \midrule
+    Total                                                       & 100   \\
+    \bottomrule
+  \end{tabularx}
+\end{center}
+
+\end{document}
