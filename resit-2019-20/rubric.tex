@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{tikz}
+\usepackage{enumitem}
 \usetikzlibrary{matrix,shapes,positioning,fit,decorations.pathreplacing,arrows,calc}
 \usepackage{graphicx}
 \usepackage{cleveref}
@@ -100,21 +101,26 @@ You can select between two algorithms for force computations with
 
 \subsection{Task specification}
 \label{sec:task}
-Your goal is to perform profiling of the provided code to identify
-computational hotspots. Having identified the hotspots, you should
-then explore them hotspots in more detail using likwid (by
-appropriately annotating the identified hotspots). Recall that to use
-likwid on Hamilton you need \texttt{module load likwid/5.0.1}.
-
-You should explore the effect of different compiler flags (the default
-set is not optimal) on the performance by editing \texttt{cflags.mk}
+The first task is to identify computational hotspots in the code via
+profiling. Having identified the hotspots, you should then explore
+them in more detail using likwid (by appropriately annotating the
+identified hotspots). Recall that to use likwid on Hamilton you need
+\texttt{module load likwid/5.0.1}.
+Concretely you should
+\begin{enumerate}
+\item Perform profiling to identify hotspots
+\item Identify the impact of different compiler flags on the performance by editing \texttt{cflags.mk}
 and rebuilding the executable with \texttt{make}.
-
-In addition to compiler flags, the code implements two optimisations,
-selected by setting \texttt{USE\_SIMD} and \texttt{USE\_PADDING} to
-\texttt{Yes} in \texttt{cflags.mk}. What, if any, effect do these
-settings have on the performance?
-
+\item Assess the behaviour of two optimisations implemented in the
+  code:
+  \begin{enumerate}[label=\roman*.]
+  \item explicit SIMD annotations for vectorisation (enabled with
+    \texttt{USE\_SIMD} in \texttt{cflags.mk});
+  \item padding of data structures for better memory access patterns
+    (enabled with \texttt{USE\_PADDING} in \texttt{cflags.mk}).
+  \end{enumerate}
+  What, if any, effect do these settings have on the performance?
+\end{enumerate}
 
 \subsection{Submission details}
 \label{sec:submission}
@@ -147,12 +153,12 @@ You should submit
   \textbf{This document \emph{must} be submitted as PDF}.
 \end{itemize}
 
+\pagebreak
 \section{Marks}
 \label{sec:marks}
 
 There are in total 100 marks for the coursework, they
 will be awarded as follows:
-
 \begin{center}
   \renewcommand\tabularxcolumn[1]{m{#1}}
   \begin{tabularx}{0.9\linewidth}{Xc}
